@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -49,7 +50,7 @@ public class UserModel implements Serializable{
 	private String senha;
 	
 	@NotBlank(message = "O campo cpf deve ser preenchido.")
-	@Size(max = 11, message = "Preencha com um cpf válido!")
+	@Pattern(regexp = "[0-9]{11}", message = "Preencha com um cpf válido!")
 	@Column(length = 11, nullable = false)
 	private String cpf;
 	
