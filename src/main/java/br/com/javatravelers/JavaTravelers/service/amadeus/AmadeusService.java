@@ -1,4 +1,4 @@
-package br.com.javatravelers.JavaTravelers.services.amadeus;
+package br.com.javatravelers.JavaTravelers.service.amadeus;
 
 import java.awt.List;
 import java.util.ArrayList;
@@ -82,13 +82,12 @@ public class AmadeusService {
 	}
 
 	public void searchPrice() {
-
 		try {
 			FlightOfferSearch[] flightOffersSearches = amadeus.shopping.flightOffersSearch.get(
 					Params.with("originLocationCode", "SYD")
 					.and("destinationLocationCode", "BKK")
-					.and("departureDate", "2020-11-01")
-					.and("returnDate", "2020-11-08")
+					.and("departureDate", "2020-11-10")
+					.and("returnDate", "2020-11-20")
 					.and("adults", 1)
 					.and("max", 2));
 
@@ -105,8 +104,6 @@ public class AmadeusService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 
 	public static void main(String[] args) {
@@ -119,7 +116,6 @@ public class AmadeusService {
 
 		//amadeus.searchCities("Lond");
 		amadeus.searchPrice();
-
 	}
 
 
