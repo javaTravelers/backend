@@ -40,13 +40,17 @@ public class TicketModel {
 	private String aeroportoOrigem;
 	
 	@NotBlank
+	@Column(name = "cidade_origem")
+	private String cidadeOrigem;
+	
+	@NotBlank
 	@Column(name = "aeroporto_destino")
 	private String aeroportoDestino;
 	
 	@NotBlank
 	@Column(name = "cidade_destino")
 	private String cidadeDestino;
-	
+		
 	@NotBlank
 	@Column(name = "horario_embarque")
 	private String horarioEmbarque;
