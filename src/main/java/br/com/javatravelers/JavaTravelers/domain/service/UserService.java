@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
+import br.com.javatravelers.JavaTravelers.uteis.ValidaCPF;
 
 @Service
 public class UserService {
@@ -18,8 +19,13 @@ public class UserService {
 		UserModel userModelDB = userRepository.findByEmail(userModel.getEmail());
 		
 		if ((userModelDB != null) && (!userModelDB.equals(userModel))) {
-			throw new BusinnesException("Já existe um usuário cadastrado com esse e-mail!");
+			throw new BusinnesException("Já existe um usuário cadastrado com esse e-mail.");
 		}
+		
+		if (!ValidaCPF.cpfValid(userModel.getCpf())) {
+			throw new BusinnesException("O cpf informado é inválido.");
+		}
+		
 		return userRepository.save(userModel);
 	}
 }
