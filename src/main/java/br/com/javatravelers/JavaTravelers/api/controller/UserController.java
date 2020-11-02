@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 import br.com.javatravelers.JavaTravelers.domain.service.UserService;
@@ -29,14 +28,7 @@ public class UserController {
 	
 	@PostMapping
 	public ResponseEntity<?> saveUser(@Valid @RequestBody UserModel userModel) {
-		try {
-			userService.saveUser(userModel);
-		
-		} catch (BusinnesException e) {
-			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("error: " + e.getMessage());
-		}
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
+		return new ResponseEntity<UserModel>(userService.saveUser(userModel), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/{id}")
