@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.FavoritesModel;
 import br.com.javatravelers.JavaTravelers.domain.repository.FavoriteRepository;
 
@@ -38,17 +36,10 @@ public class FavoriteController {
 		
 	}
 	
-	//TODO: Realizar chamada para o FavoriteService e implementar o mesmo, verificar como validar se o favorito já existe.
 	@PostMapping
 	public ResponseEntity<FavoritesModel> saveFavorite(@Valid @RequestBody FavoritesModel favoriteModel) {
 		
-		try {
-			
-			
-		} catch (BusinnesException e) {
-			
-		}
-		return null;
+		return new ResponseEntity<FavoritesModel>(favoriteRepository.save(favoriteModel), HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/{companyName}/{user_id}")
