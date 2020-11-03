@@ -58,7 +58,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 		}
 		
 		public void setDataHora(LocalDateTime dataHora) {
-			this.dataHora = dataHora;
+			this.dataHora = dataHora.withNano(0);
 		}
 		
 		public String getTitulo() {

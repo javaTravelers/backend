@@ -1,6 +1,7 @@
 package br.com.javatravelers.JavaTravelers.domain.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 import br.com.javatravelers.JavaTravelers.domain.status.TicketStatus;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +35,12 @@ public class TicketModel {
 	private Integer id;
 	
 	@NotBlank
-	private LocalDate data;
+	@Column(name = "data_partida")
+	private LocalDate dataPartida;
+	
+	@NotBlank
+	@Column(name = "data_retorno")
+	private LocalDate dataRetorno;
 	
 	@NotBlank
 	@Column(name = "aeroporto_origem")
@@ -52,12 +59,12 @@ public class TicketModel {
 	private String cidadeDestino;
 		
 	@NotBlank
-	@Column(name = "horario_embarque")
-	private String horarioEmbarque;
+	@Setter(AccessLevel.NONE)
+	private LocalDateTime Embarque;
 	
 	@NotBlank
-	@Column(name = "horarioChegada")
-	private String horarioChegada;
+	@Setter(AccessLevel.NONE)
+	private LocalDateTime Chegada;
 	
 	@NotBlank
 	private String portao_embarque;
@@ -115,5 +122,15 @@ public class TicketModel {
 	@NotBlank
 	@OneToOne
 	private PaymentModel payment;
+	
+	@SuppressWarnings("unused")
+	private void setEmbarque (LocalDateTime embarque) {
+		this.Embarque = embarque.withNano(0);
+	}
+	
+	@SuppressWarnings("unused")
+	private void setChegada (LocalDateTime chegada) {
+		this.Chegada = chegada.withNano(0);
+	}
 	
 }
