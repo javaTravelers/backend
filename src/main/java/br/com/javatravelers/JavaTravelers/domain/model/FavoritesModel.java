@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class FavoritesModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty(value = "Código do Favorito")
 	private Integer id;
 	
 	@NotBlank
@@ -37,6 +39,7 @@ public class FavoritesModel {
 	
 	@NotBlank
 	@Column(name = "cidade_origem")
+	@ApiModelProperty(name = "Cidade de Origem")
 	private String cidadeOrigem;
 	
 	@NotBlank
