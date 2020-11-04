@@ -45,5 +45,11 @@ public class TicketController {
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
+	@PostMapping("/order/create")
+	public ResponseEntity<String> createOrder(@RequestBody String request){
+		String response = amadeus.createOrder(request);
+		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
+	}
+	
 	
 }
