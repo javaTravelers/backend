@@ -35,6 +35,7 @@ import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrder
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
+import br.com.javatravelers.JavaTravelers.service.amadeus.exception.TicketException;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
 
 
@@ -165,5 +166,17 @@ public class AmadeusService {
 		}
 
 		return response;
+	}
+	
+	public FlightOrderResult viewOrder(String id) {
+		try {
+			return ams.viewOrder(id);
+		} catch (ResponseException e) {
+			throw new TicketException("A reserva solicitada não existe.", 400);
+		}
+	}
+	
+	public boolean deleteOrder(String id) {
+		return ams.deleteOrder(id);
 	}
 }
