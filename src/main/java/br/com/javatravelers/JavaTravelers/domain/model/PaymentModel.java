@@ -33,6 +33,9 @@ public class PaymentModel {
 	private String formaPagamento;
 	
 	@NotBlank
+	private String url;
+	
+	@NotBlank
 	@Column(name = "valor_transacao")
 	private Double valorTransacao;
 	
