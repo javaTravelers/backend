@@ -89,4 +89,38 @@ public class AmadeusServiceUtil extends Pricing {
 		return result;
 	}
 
+	public FlightOrderResult viewOrder(String flightOfferId) throws ResponseException {
+		String path = String.format("/v1/booking/flight-orders/%s", flightOfferId);
+	    Response response = client.get(path, null);
+		Gson json = new Gson();
+		FlightOrderResult result = json.fromJson(response.getResult(), FlightOrderResult.class);
+
+		return result;
+	}
+	
+	public boolean deleteOrder(String flightOfferId) {
+		com.amadeus.resources.FlightOrder order = null;
+		try {
+			order = client.booking.flightOrder(flightOfferId).delete();
+		} catch (ResponseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if (order.getResponse().getStatusCode() != 200) {
+	        System.out.println("Wrong status code: " + order.getResponse().getStatusCode());
+	      }
+		String path = String.format("/v1/booking/flight-orders/%s", flightOfferId);
+	    Response response;
+		try {
+			response = client.delete(path, null);
+		} catch (ResponseException e) {
+			if (e.getCode() == "204") {
+				//return true;
+				
+			}
+		}
+		
+
+		return true;
+	}
 }
