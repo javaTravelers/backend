@@ -29,5 +29,4 @@ jobs:
         app-name: 'javaTravelers-backend'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_75c234a83a794e3c9f3d291d14e71b00 }}
-        package: '${{ github.workspace }}/target/*.war'
-        working-directory: '/'
+        package: '${{ github.workspace }}/target/*.jar'
