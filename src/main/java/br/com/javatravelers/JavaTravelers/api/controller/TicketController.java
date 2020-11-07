@@ -72,7 +72,7 @@ public class TicketController {
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
-	@DeleteMapping("/order/delete/{flightOrderId}")
+	@DeleteMapping("/order/{flightOrderId}")
 	public ResponseEntity<Boolean> deleteOrder(@PathVariable String flightOrderId){
 		boolean response = amadeus.deleteOrder(flightOrderId);
 		return  ResponseEntity.status(response ? HttpStatus.OK : HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(response);

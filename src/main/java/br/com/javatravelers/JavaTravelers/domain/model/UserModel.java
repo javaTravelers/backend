@@ -54,4 +54,5 @@ public class UserModel implements Serializable{
 	@Column(length = 11, nullable = false)
 	private String cpf;
 	
+	
 }
