@@ -22,7 +22,8 @@ jobs:
 
     - name: Build with Maven
       run: mvn clean install
-
+      working-directory: /
+      
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
