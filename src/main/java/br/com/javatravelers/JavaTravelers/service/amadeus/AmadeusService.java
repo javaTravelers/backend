@@ -4,6 +4,7 @@ package br.com.javatravelers.JavaTravelers.service.amadeus;
 import java.util.Map;
 
 import org.hibernate.internal.build.AllowSysOut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.amadeus.Amadeus;
@@ -14,26 +15,40 @@ import com.amadeus.resources.Location;
 import com.amadeus.resources.Traveler;
 import com.amadeus.resources.Traveler.Document;
 import com.amadeus.resources.Traveler.Phone;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.amadeus.resources.FlightOfferSearch;
 import com.amadeus.resources.FlightOrder;
 import com.amadeus.resources.FlightPrice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderGet;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceResult;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
+
 
 @Service
 public class AmadeusService {
 
 	private Amadeus amadeus;
+	private AmadeusServiceUtil ams;
 
 	public AmadeusService () {
 		this.amadeus = Amadeus
 				.builder("RZ3pbc22VwLAXtXqIU80DmT2hv1M2J8y", "zVyCOrYgU6ThENBK")
 				.build();
+		this.ams = new AmadeusServiceUtil(amadeus);
 	}
 
 	public String flightOffers(Map<String, String> request) {
@@ -47,9 +62,11 @@ public class AmadeusService {
 					.and("departureDate", request.get("departureDate"))
 					.and("returnDate", request.get("returnDate"))
 					.and("adults", request.get("adults"))
+					////the number of child travelers (older than age 2 and younger than age 12 on date of departure) who will each have their own separate seat.
+					.and("infant", request.get("children"))
 					.and("currencyCode", "BRL")
-					.and("max", "1"));
-			
+					.and("max", "10"));
+
 			if (flightOffers.length <= 0) {
 				throw new BusinnesException("[400] - Não foram encontrados vôos com esses parâmetros.");
 			}
@@ -61,18 +78,37 @@ public class AmadeusService {
 		return jsons;
 	}
 
-	public String flightOffers(String flight) {
-		Gson gson = new Gson();
-		// String example: {\"originDestinations\":[{\"id\":\"1\",\"originLocationCode\":\"NYC\",\"destinationLocationCode\":\"LON\",\"departureDateTimeRange\":{\"date\":\"2020-12-01\",\"time\":\"10:00:00\"}},{\"id\":\"2\",\"originLocationCode\":\"LON\",\"destinationLocationCode\":\"RIO\",\"departureDateTimeRange\":{\"date\":\"2020-12-05\",\"time\":\"17:00:00\"}}],\"travelers\":[{\"id\":\"1\",\"travelerType\":\"ADULT\",\"fareOptions\":[\"STANDARD\"]},{\"id\":\"2\",\"travelerType\":\"CHILD\",\"fareOptions\":[\"STANDARD\"]}],\"sources\":[\"GDS\"],\"searchCriteria\":{\"oneWay\":\"true\",\"maxFlightOffers\":10,\"flightFilters\":{\"cabinRestrictions\":[{\"cabin\":\"BUSINESS\",\"coverage\":\"MOST_SEGMENTS\",\"originDestinationIds\":[\"1\"]}],\"carrierRestrictions\":{\"excludedCarrierCodes\":[\"AA\",\"TP\",\"AZ\"]}}}}";
-		String jsons = null;
-		FlightOfferSearch[] flightOffers = null;
+	public FlightOfferResult flightOffers(FlightOfferGet request) {
+		FlightOfferResult flightOffers = null;
 		try {
-			flightOffers = amadeus.shopping.flightOffersSearch.post(flight);
-			jsons = gson.toJson(flightOffers, FlightOfferSearch[].class);
+			flightOffers = ams.getOffer(
+					Params.with("originLocationCode", request.getOriginCode())
+					.and("destinationLocationCode", request.getDestinationCode())
+					.and("departureDate", request.getDepartureDate())
+					.and("returnDate", request.getReturnDate())
+					.and("adults", request.getAdults())
+					////the number of child travelers (older than age 2 and younger than age 12 on date of departure) who will each have their own separate seat.
+					.and("children", request.getChildren())
+					.and("infants", request.getInfants())
+					.and("currencyCode", request.getCurrencyCode())
+					.and("max", request.getMax()));
 		} catch (ResponseException e) {
 			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
 		}
-		return jsons;
+		return flightOffers;
+	}
+
+	public FlightOfferResult flightOffers(OffersSearch offersSearch) {
+		Gson gson = new Gson();
+		String json = gson.toJson(offersSearch);
+		FlightOfferResult flighOfferss = null;
+		try {
+			flighOfferss = ams.postOffer(json);
+		} catch (ResponseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return flighOfferss;
 	}
 
 	public String searchLocations(SearchLocation search) {
@@ -95,74 +131,39 @@ public class AmadeusService {
 		return response;
 	}
 
-	public String searchPrice(String flight) {
+	public FlightPriceResult searchPrice(FlightPriceSearch flight) {
 		Gson json = new Gson();
-		String response = null;
+		String search = json.toJson(flight);
+
+		FlightPriceResult flightPricing;
 		try {
 			// We price the 2nd flight of the list to confirm the price and the availability
-			FlightPrice flightPricing;
-			flightPricing = amadeus.shopping.flightOffersSearch.pricing.post(
-					flight);
-			if (flightPricing.getResponse().getStatusCode() != 200) {
-				throw new BusinnesException("Erro ao localizar a passagem!");
-			}
-			response = json.toJson(flightPricing.getResponse().getResult());
+			flightPricing = ams.getPrice(search);
 		} catch (ResponseException e) {
 			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
 		}
-		return response;
+		return flightPricing;
 	}
-	
-	public String createOrder(String flight) {
-		Gson json = new Gson();
-		String response = null;
-		
-		Traveler traveler = new Traveler();
 
-	    traveler.setId("1");
-	    traveler.setDateOfBirth("2000-04-14");
-	    traveler.setName(traveler.new Name("JORGE", "GONZALES"));
-
-	    Traveler.Phone[] phone = new Phone[1];
-	    phone[0] = traveler.new Phone();
-	    phone[0].setCountryCallingCode("33");
-	    phone[0].setNumber("675426222");
-	    phone[0].setDeviceType("MOBILE");
-
-	    Traveler.Contact contact = traveler.new Contact();
-	    contact.setPhones(phone);
-	    traveler.setContact(contact);
-
-	    Traveler.Document[] document = new Document[1];
-	    document[0] = traveler.new Document();
-	    document[0].setDocumentType("PASSPORT");
-	    document[0].setNumber("480080076");
-	    document[0].setExpiryDate("2022-10-11");
-	    document[0].setIssuanceCountry("ES");
-	    document[0].setNationality("ES");
-	    document[0].setHolder(true);
-	    traveler.setDocuments(document);
-
-	    Traveler[] travelerArray = new Traveler[1];
-	    travelerArray[0] = traveler;
-
-
-	    // We book the flight previously priced
-	    FlightOrder order = null;
+	public FlightOrderResult createOrder(FlightOrderGet flight) {
+		ObjectMapper mapper = new ObjectMapper();
+		String create = "";
+		//Object to JSON in String
 		try {
-			order = amadeus.booking.flightOrders.post(flight);
-			System.out.println(order);
-			if (order == null)
-				throw new BusinnesException("A passagem solicitada não existe.");
-			
-			if (order.getResponse().getStatusCode() != 200 && order.getResponse().getStatusCode() != 201)
-				throw new BusinnesException("" + order.getResponse().getStatusCode());
+			create = mapper.writeValueAsString(flight);
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		FlightOrderResult response = null;
+		try {
+			response = ams.createOrder(create);
+			System.out.println(response);
 
 		} catch (ResponseException e) {
 			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
 		}
-	    response = json.toJson(order.getResponse().getResult());
-		
+
 		return response;
 	}
 }
