@@ -3,20 +3,21 @@
 *****
  @javawarriors  :shamrock:
  ****
- Integrantes :trophy:
+ **Integrantes** :trophy:
 * Adriano Almeida   :rocket:
 * Luiz Eduardo Bilotta :rocket:
 * Luciano Luiz Romero  :rocket:
 ******
-DESAFIO FINAL - ENUNCIADO TÉCNICO
+## DESAFIO FINAL - ENUNCIADO TÉCNICO <h2> 
 
-**Escopo do projeto:**
+## **Escopo do projeto:** <h3>
 
 ● A equipe deverá desenvolver um sistema de compra e
 reserva de passagens aéreas, integrado com meio de
 pagamento de sua escolha.
 
-**Requisitos não-funcionais**
+******
+## **Requisitos não-funcionais** <h3>
 
 ● Performance
 
@@ -35,8 +36,8 @@ front-end)
 celular)
 
 ● Controle de concorrência na persistência dos objetos
-
-**Principais funcionalidades (entregas obrigatórias):**
+******
+## **Principais funcionalidades (entregas obrigatórias):** <h3>
 
 ● Cadastro do usuário, login e logout;
 
@@ -51,10 +52,7 @@ relevância e preço;
 
 ● Checkout integrado com meio de pagamento;
 
-● Função de compartilhar uma passagem integrada com
-alguma rede social;
-
 ● Função de favoritar uma passagem e página de exibição
 de favoritos.
-
-
+******
+![javawarriors](https://www.flaticon.com/svg/static/icons/svg/2332/2332589.svg)
