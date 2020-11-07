@@ -1,7 +1,5 @@
 package br.com.javatravelers.JavaTravelers.api.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +9,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderGet;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceResult;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
 import br.com.javatravelers.JavaTravelers.service.amadeus.AmadeusService;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
 
@@ -21,17 +26,6 @@ public class TicketController {
 	@Autowired
 	AmadeusService amadeus;
 	
-	/**
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@PostMapping("/search/offers")
-	public ResponseEntity<String> listar(@RequestBody Map<String, String> request){
-		String response = amadeus.flightOffers(request);
-		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
-	}
-	
 	@PostMapping("/search/location")
 	public ResponseEntity<String> getLocations(@RequestBody SearchLocation request){
 		System.out.println(request.getLocation());
@@ -39,15 +33,32 @@ public class TicketController {
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
-	@PostMapping("/confirmPrice")
-	public ResponseEntity<String> getPrice(@RequestBody String request){
-		String response = amadeus.searchPrice(request);
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/offers")
+	public ResponseEntity<FlightOfferResult> listar(@RequestBody FlightOfferGet request){
+		FlightOfferResult response = amadeus.flightOffers(request);
+		return  new ResponseEntity<FlightOfferResult>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/offers/search")
+	public ResponseEntity<FlightOfferResult> listar(@RequestBody OffersSearch offersSearch){
+		FlightOfferResult response = amadeus.flightOffers(offersSearch);
+		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
+	}
+	
+	@PostMapping("/offers/price")
+	public ResponseEntity<FlightPriceResult> flightOffersPrice(@RequestBody FlightPriceSearch offersSearch){
+		FlightPriceResult response = amadeus.searchPrice(offersSearch);
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
 	@PostMapping("/order/create")
-	public ResponseEntity<String> createOrder(@RequestBody String request){
-		String response = amadeus.createOrder(request);
+	public ResponseEntity<FlightOrderResult> createOrder(@RequestBody FlightOrderGet request){
+		FlightOrderResult response = amadeus.createOrder(request);
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
