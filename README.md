@@ -1,14 +1,17 @@
-### BACKEND #### 
+ ### BACKEND ####  
+**JavaTravelers Rest API foi desenvolvida para permitir a busca de passagens aéreas, bem como favoritar, e realizar a compra integrada com PagueSeguro. O projeto foi desenvolvido durante o treinamento realizado pela Gama para os New Joiners da Accenture.**
 
+Desenvolvido pelo grupo 8 - @javawarriors :four_leaf_clover:
+ 
 *****
- @javawarriors  :shamrock:
+ 
  ****
  **Integrantes** :trophy:
 * Adriano Almeida   :rocket:
 * Luiz Eduardo Bilotta :rocket:
 * Luciano Luiz Romero  :rocket:
 ******
-## DESAFIO FINAL - ENUNCIADO TÉCNICO <h2> 
+<h2 align="center"> DESAFIO FINAL - ENUNCIADO TÉCNICO </h2> 
 
 ## **Escopo do projeto:** <h3>
 
@@ -56,3 +59,17 @@ relevância e preço;
 de favoritos.
 ******
 ![javawarriors](https://www.flaticon.com/svg/static/icons/svg/2332/2332589.svg)
+******
+<h2 align="center" > DESAFIO FINAL - ENTREGAS ADICIONAIS </h2>
+
+<p align="justify"> A equipe utilizou a ferramenta Trello(trello.com) para auxiliar no Scrum permitindo uma melhor organização.
+Após a análise dos requisitos, foram listadas todas as atividades necessárias definindo assim nosso Product Backlog. Para o desenvolvimento das atividades, dividimos em dois Sprints(ciclos) com prazos definidos (cada um equivalente a uma semana) com as tarefas que cada membro da equipe deveria realizar. As atividades para cada Sprint foram definidas através de um Sprint Planning. Durante cada dia era disseminado os conhecimentos identificando os impedimentos e priorizando o trabalho do dia que se inicia.
+A equipe foi definida através de maior proximidade e afinidade entre os membros do projeto.
+A dificuldade encontrada foi a falta de experiência no trabalho em equipe no ambiente tecnológico.
+O projeto nos mostrou a importância do trabalho em equipe onde os diferentes conhecimentos e experiências sendo compartilhados se complementam afim de atingir o objeto em comum.</p>
+
+
+
+
+
+
