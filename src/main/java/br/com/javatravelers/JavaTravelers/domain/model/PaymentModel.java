@@ -29,8 +29,7 @@ public class PaymentModel {
 	private String codTransacao;
 	
 	@NotBlank
-	@Column(name = "forma_pagamento")
-	private String formaPagamento;
+	private String url;
 	
 	@NotBlank
 	@Column(name = "valor_transacao")
