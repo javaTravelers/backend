@@ -18,11 +18,11 @@ jobs:
     - name: Set up Java version
       uses: actions/setup-java@v1
       with:
-        java-version: '8'
+        java-version: '1.8'
 
     - name: Build with Maven
       run: mvn clean install
-      working-directory: /
+      working-directory: '/'
       
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
