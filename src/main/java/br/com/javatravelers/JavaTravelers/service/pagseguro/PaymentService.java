@@ -21,7 +21,7 @@ import okhttp3.Response;
 @Service
 public class PaymentService {
 
-	public String generatedUrlToCheckout(Payment_items items) {
+	public PaymentResult generatedUrlToCheckout(Payment_items items) {
 		
 		Checkout checkout = new Checkout();
 		List<Payment_items> payment_items = new ArrayList<Payment_items>();
@@ -79,11 +79,13 @@ public class PaymentService {
 			String code = responseCode.substring(responseCode.indexOf("<code>"), responseCode.indexOf("</code>")).replaceFirst("<code>", "");
 			//String date = responseCode.substring(responseCode.indexOf("<date>"), responseCode.indexOf("</date>")).replaceFirst("<date>", "");
 			
-			Map<String, String> generatedUrl = new HashMap<>();
-			generatedUrl.put("url:", InformationsAndUtils.LINK_CHECKOUT + code);
+			PaymentResult result = new PaymentResult();
+			result.setCode(code);
+			String url = InformationsAndUtils.LINK_CHECKOUT + code;
+			result.setUrl(url);
 			
-			Gson gson = new Gson();
-			return gson.toJson(generatedUrl);
+			
+			return result;
 			
 		} else {
 			throw new BusinnesException("A comunicação com o servidor obteve sucesso porém ocorreu o erro: " + response.code());

@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.FavoriteModel;
-import br.com.javatravelers.JavaTravelers.domain.model.UserModel;
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
 import br.com.javatravelers.JavaTravelers.domain.repository.FavoriteRepository;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
