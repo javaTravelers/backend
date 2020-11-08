@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color:#9c00f7;
+    height: 10%;
+    vertical-align: center;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    color: #fff;
+    font-family: 'Bebas Neue', Courier, monospace;
+}
+
+header img {
+    max-height: 90%;
+   
+}
+
+footer {
+    height: 25%;
+    background-color:#9c00f7;
+    box-shadow: 0px -4px 4px rgba(0, 0, 0, 0.25);
+}
+
+h2 {
+    background-color: #9c00f7;
+    text-align: center;
+    font-family: 'Nunito', Courier, monospace;
+    color: #fff;
+}
+
+.buttons a:hover,
+   a:active {
+    text-decoration: none;
+}
+
+.principal {
+    width: 100vw;
+    height: 100vh;
+}
+
+.navbar {
+    height: 10%;
+}
+
+.logoWarrior {
+    max-width: 50px;
+}
+
+.logos {
+    max-height: 75px;
+}
+
+.textApresentation {
+    text-align: justify;
+    font-family: 'Nunito', Courier, monospace;
+    color: #000;
+    font-size: 1.3em;
+}
+
+.footerText {
+    vertical-align: middle;
+    color: #fff;
+    font-family: 'Nunito', Courier, monospace;
+    font-weight: 400;
+    font-size: 1em;
+}
+
+.footerText img {
+    max-width: 90px;
+}
+
+.warriorCentral {
+    max-height: 400px;
+}
+
+.footerText a:hover,
+            a:active {
+                text-decoration: none;
+            }
+
+
+
+
+
+
+
