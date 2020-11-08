@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.javatravelers.JavaTravelers.service.pagseguro.PaymentResult;
 import br.com.javatravelers.JavaTravelers.service.pagseguro.PaymentService;
 import br.com.javatravelers.JavaTravelers.service.pagseguro.Payment_items;
 
@@ -19,7 +20,7 @@ public class PaymentController {
 	private PaymentService paymentService;
 	
 	@PostMapping
-	public ResponseEntity<String> payWithCheckout(@RequestBody Payment_items items) {
-		return new ResponseEntity<String>(paymentService.generatedUrlToCheckout(items), HttpStatus.OK);
+	public ResponseEntity<PaymentResult> payWithCheckout(@RequestBody Payment_items items) {
+		return new ResponseEntity<PaymentResult>(paymentService.generatedUrlToCheckout(items), HttpStatus.OK);
 	}
 }

@@ -37,7 +37,7 @@ public class AutenticacaoController {
 	private UserAuthRepository userRepository;
 	
 	@PostMapping("/signup")
-	public void signin(@RequestBody UserModel cliente) {
+	public void signin(@RequestBody UserAuthModel cliente) {
 		service.save(cliente);
 	}
 	    
