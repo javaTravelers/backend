@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserAuthModel;
 import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
+import br.com.javatravelers.JavaTravelers.domain.repository.UserAuthRepository;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 
 
@@ -20,18 +22,18 @@ public class JwtUserService implements UserDetailsService  {
 	private UserRepository repository;
 	
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-		UserModel usuario = repository.findByLogin(login);
+		UserModel usuario = repository.findByEmail(login);
 		if(usuario == null){
 			throw new UsernameNotFoundException("Usuário não existe");
 		}
 		Set<SimpleGrantedAuthority> roles=getAuthority(usuario);
-		return new org.springframework.security.core.userdetails.User(usuario.getLogin(), usuario.getSenha(), roles);
+		return new org.springframework.security.core.userdetails.User(usuario.getEmail(), usuario.getSenha(), roles);
 	}
 	private Set<SimpleGrantedAuthority> getAuthority(UserModel user){
 		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-		user.getRoles().forEach(r->{
-			authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getNome().toUpperCase()));
-		});
+		//user.getRoles().forEach(r->{
+		//	authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getNome().toUpperCase()));
+		//});
 		return authorities;
 	}
 }

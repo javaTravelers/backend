@@ -32,18 +32,17 @@ public class CadastroService {
 		}
 		return null;
 	}
-	public Integer save(Operador operador) {
+	public Integer save(UserAuthModel operador) {
 		return saveUsuario(operador);
 	}
 	
-	public Integer save(UserModel cliente) {
-		if(cliente.getId()==null) {
-			cliente.setRoles(new HashSet<>());
-			cliente.addRole(new Role("USER"));
-		}
-		 return saveUsuario(cliente);
-		
-	}
+	/*
+	 * public Integer save(UserModel cliente) { if(cliente.getId()==null) {
+	 * cliente.setRoles(new HashSet<>()); cliente.addRole(new Role("USER")); }
+	 * return saveUsuario(cliente);
+	 * 
+	 * }
+	 */
 	
 	
 }
