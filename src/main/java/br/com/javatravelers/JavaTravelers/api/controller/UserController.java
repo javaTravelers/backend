@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.javatravelers.JavaTravelers.domain.model.UserModel;
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 import br.com.javatravelers.JavaTravelers.domain.service.UserService;
 import io.swagger.annotations.Api;

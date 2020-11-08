@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
-import br.com.javatravelers.JavaTravelers.domain.model.UserModel;
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 import br.com.javatravelers.JavaTravelers.uteis.ValidaCPF;
 

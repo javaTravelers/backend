@@ -1,6 +1,8 @@
 package br.com.javatravelers.JavaTravelers.service.amadeus;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.internal.build.AllowSysOut;
@@ -28,6 +30,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
+import br.com.javatravelers.JavaTravelers.domain.model.FavoriteModel;
+import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;
@@ -35,6 +40,8 @@ import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrder
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
+import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
+import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 import br.com.javatravelers.JavaTravelers.service.amadeus.exception.TicketException;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
 
@@ -44,6 +51,11 @@ public class AmadeusService {
 
 	private Amadeus amadeus;
 	private AmadeusServiceUtil ams;
+	
+	@Autowired
+	private TicketRepository ticketRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 	public AmadeusService () {
 		this.amadeus = Amadeus
@@ -52,6 +64,37 @@ public class AmadeusService {
 		this.ams = new AmadeusServiceUtil(amadeus);
 	}
 
+	public TicketModel ticketConverter(FlightOrderGet flight, int id) {
+		UserModel user = userRepository.findById(id);
+
+		if (user == null) {
+			throw new BusinnesException("Usuário não localizado: ID: "+ id);
+		}
+
+		Gson json = new Gson();
+		String strFlight = json.toJson(flight);
+
+		TicketModel ticketModel = new TicketModel();
+	
+		ticketModel.setFlight(strFlight);
+		ticketModel.setUserId(user.getId());
+
+		return ticketModel;
+	}
+
+	public FlightOrderGet ticketConverter(String reserva) {
+		TicketModel  ticket = ticketRepository.findByNumeroReserva(reserva);
+
+		if (ticket == null) {
+			throw new BusinnesException("Não encontramos a reserva: "+ reserva);
+		}
+		
+		Gson json = new Gson();
+		FlightOrderGet flight = json.fromJson(ticket.getFlight(), FlightOrderGet.class);; 
+
+		return flight;
+	}
+	
 	public String flightOffers(Map<String, String> request) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		FlightOfferSearch[] flightOffers = null;

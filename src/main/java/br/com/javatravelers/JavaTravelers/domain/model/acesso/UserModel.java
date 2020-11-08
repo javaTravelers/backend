@@ -1,12 +1,18 @@
-package br.com.javatravelers.JavaTravelers.domain.model;
+package br.com.javatravelers.JavaTravelers.domain.model.acesso;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -24,14 +30,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
-public class UserModel implements Serializable{
-
-	private static final long serialVersionUID = 1L;
-
-
+public class UserModel {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
+	
+	@NotBlank(message = "O campo senha deve ser preenchido.")
+	@Size(max = 100, message = "A senha deve conter no máximo 20 caracteres.")
+	@Column(length = 100, nullable = false)
+	private String senha;
 	
 	@NotBlank(message="O campo nome deve ser preenchido.")
 	@Size(max = 80, message = "O nome deve conter no máximo 50 caracteres.")
@@ -43,11 +50,6 @@ public class UserModel implements Serializable{
 	@Size(max = 60, message = "O endereço de e-mail é muito grande.")
 	@Column(length = 60, nullable = false)
 	private String email;
-	
-	@NotBlank(message = "O campo senha deve ser preenchido.")
-	@Size(max = 20, message = "A senha deve conter no máximo 20 caracteres.")
-	@Column(length = 20, nullable = false)
-	private String senha;
 	
 	@NotBlank(message = "O campo cpf deve ser preenchido.")
 	@Pattern(regexp = "[0-9]{11}", message = "Preencha com um cpf válido!")
