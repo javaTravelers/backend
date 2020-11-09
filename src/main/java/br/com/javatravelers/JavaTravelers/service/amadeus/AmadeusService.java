@@ -194,6 +194,10 @@ public class AmadeusService {
 	}
 	
 	public boolean deleteOrder(String id) {
-		return ams.deleteOrder(id);
+		try {
+			return ams.deleteOrder(id);
+		} catch (ResponseException e) {
+			throw new TicketException("A reserva foi excluída com sucesso.", 200);
+		}
 	}
 }

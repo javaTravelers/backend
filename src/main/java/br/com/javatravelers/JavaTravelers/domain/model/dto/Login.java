@@ -8,9 +8,10 @@ import lombok.Setter;
 @Setter
 public class Login {
 	
-	@ApiModelProperty(value = "Nome do usuario", required = true, example = "user")
-	private String usuario;
+	
 	@ApiModelProperty(value = "Senha do usuario", required = true, example = "user@123.com")
+	private String usuario;
+	@ApiModelProperty(value = "Nome do usuario", required = true, example = "user")
 	private String senha;
 	
 }

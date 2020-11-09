@@ -1,5 +1,8 @@
 package br.com.javatravelers.JavaTravelers.api.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
@@ -76,20 +80,30 @@ public class TicketController {
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
-	@GetMapping("/order/view/{flightOrderId}")
-	public ResponseEntity<FlightOrderResult> viewOrder(@PathVariable String flightOrderId){
+	@GetMapping("/order/view")
+	public ResponseEntity<FlightOrderResult> viewOrder(@RequestParam(value = "flightOrderId") String flightOrderId){
+		try {
+			flightOrderId = URLEncoder.encode(flightOrderId, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
 		FlightOrderResult response = amadeus.viewOrder(flightOrderId);
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
-	@DeleteMapping("/order/{flightOrderId}")
-	public ResponseEntity<Boolean> deleteOrder(@PathVariable String flightOrderId){
+	@DeleteMapping("/order")
+	public ResponseEntity<Boolean> deleteOrder(@RequestParam(value = "flightOrderId") String flightOrderId){
+		try {
+			flightOrderId = URLEncoder.encode(flightOrderId, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
 		boolean response = amadeus.deleteOrder(flightOrderId);
 		return  ResponseEntity.status(response ? HttpStatus.OK : HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(response);
 	}
 	
 	@GetMapping("/list")
-	public ResponseEntity<List<TicketModel>> list(@PathVariable String ticketCode){
+	public ResponseEntity<List<TicketModel>> list(){
 		List<TicketModel> ticketModel = ticketService.listTickets();		
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(ticketModel);
 	}

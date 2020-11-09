@@ -41,7 +41,22 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(TicketException.class)
 	public ResponseEntity<Object> handleTicketErrors(TicketException ex, WebRequest request) {
-		var status = HttpStatus.UNPROCESSABLE_ENTITY;
+		char code = String.valueOf(ex.getStatusCode()).charAt(0);
+		String fullCode = String.valueOf(ex.getStatusCode());
+		var status = HttpStatus.OK;
+		switch (code) {
+		case '4':
+			status = HttpStatus.NOT_FOUND;
+		case '5':
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		
+		if (fullCode.equals("201")) {
+			status = HttpStatus.CREATED;
+		}else if (fullCode.equals("422")) {
+			status = HttpStatus.UNPROCESSABLE_ENTITY;
+		}
+			
 		var statusCode = ex.getStatusCode();
 		System.out.println(statusCode);
 		var problem = new Problem();
