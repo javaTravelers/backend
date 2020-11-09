@@ -13,4 +13,5 @@ public interface FavoriteRepository extends JpaRepository<FavoriteModel, Integer
 	public List<FavoriteModel> findAllByUserId(int id);
 	
 	public FavoriteModel findByIdAndUserId(int id, int userId);
+	public boolean existsByIdAndUserId(int id, int userId);
 }

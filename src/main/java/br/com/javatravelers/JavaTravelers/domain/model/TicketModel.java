@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -35,15 +36,18 @@ public class TicketModel {
 	private Integer userId;
 		
 	@Column(name = "numero_reserva")
-	private String numeroReserva;
+	private String reservationNumber;
 	
 	@NotBlank
 	@Column(name = "payment_url")
 	private String paymentUrl;
 	
-	@NotBlank
-	private String status;
-	
 	@Column(name = "payment_id")
 	private String paymentId;
+	
+	@NotNull
+	private Double price;
+	
+	@NotBlank
+	private String status;
 }

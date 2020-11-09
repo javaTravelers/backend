@@ -2,17 +2,23 @@ package br.com.javatravelers.JavaTravelers.service.pagseguro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.BaseException;
 
+import br.com.javatravelers.JavaTravelers.domain.enums.PaymentStatus;
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
+import br.com.javatravelers.JavaTravelers.domain.model.PaymentModel;
+import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
+import br.com.javatravelers.JavaTravelers.domain.repository.PaymentRepository;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -21,6 +27,9 @@ import okhttp3.Response;
 @Service
 public class PaymentService {
 
+	@Autowired
+	PaymentRepository paymentRepository;
+	
 	public PaymentResult generatedUrlToCheckout(Payment_items items) {
 		
 		Checkout checkout = new Checkout();
@@ -90,5 +99,20 @@ public class PaymentService {
 		} else {
 			throw new BusinnesException("A comunicação com o servidor obteve sucesso porém ocorreu o erro: " + response.code());
 		}
+	}
+	
+	public PaymentModel create(TicketModel ticket) {
+		PaymentModel payment = new PaymentModel();
+		Date date = new Date();
+		payment.setCodTransacao(ticket.getPaymentId());
+		payment.setDataTransacao(date);
+		payment.setDataStatus(date);
+		payment.setUrl(ticket.getPaymentUrl());
+		payment.setUserId(ticket.getUserId());
+		payment.setValorTransacao(ticket.getPrice());
+		payment.setStatus(PaymentStatus.PROCESSANDO);
+		paymentRepository.save(payment);
+		return payment;
+		
 	}
 }

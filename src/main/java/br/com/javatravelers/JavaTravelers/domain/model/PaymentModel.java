@@ -1,5 +1,7 @@
 package br.com.javatravelers.JavaTravelers.domain.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,8 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import br.com.javatravelers.JavaTravelers.domain.status.PaymentStatus;
+import br.com.javatravelers.JavaTravelers.domain.enums.PaymentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,11 +34,23 @@ public class PaymentModel {
 	@NotBlank
 	private String url;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "valor_transacao")
 	private Double valorTransacao;
 	
-	@NotBlank
+	@NotNull
+	@Column(name = "created_at")
+	private Date dataTransacao;
+	
+	@NotNull
+	@Column(name = "updated_at")
+	private Date dataStatus;
+	
+	@NotNull
+	@Column(name = "user_id")
+	private Integer userId;
+	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private PaymentStatus Status;
 	

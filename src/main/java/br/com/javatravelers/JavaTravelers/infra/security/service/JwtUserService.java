@@ -18,22 +18,23 @@ import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 
 @Service(value = "jwtUserService")
 public class JwtUserService implements UserDetailsService  {
+	
 	@Autowired
-	private UserRepository repository;
+	private UserAuthRepository repository;
 	
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-		UserModel usuario = repository.findByEmail(login);
+		UserAuthModel usuario = repository.findByEmail(login);
 		if(usuario == null){
 			throw new UsernameNotFoundException("Usuário não existe");
 		}
-		Set<SimpleGrantedAuthority> roles=getAuthority(usuario);
+		Set<SimpleGrantedAuthority> roles = getAuthority(usuario);
 		return new org.springframework.security.core.userdetails.User(usuario.getEmail(), usuario.getSenha(), roles);
 	}
-	private Set<SimpleGrantedAuthority> getAuthority(UserModel user){
+	private Set<SimpleGrantedAuthority> getAuthority(UserAuthModel user){
 		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-		//user.getRoles().forEach(r->{
-		//	authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getNome().toUpperCase()));
-		//});
+		user.getRoles().forEach(r -> {
+			authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getRole().toUpperCase()));
+		});
 		return authorities;
 	}
 }
