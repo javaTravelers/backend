@@ -30,8 +30,9 @@ public class CadastroService {
 			usuario = validateUser(usuario);
 			usuario = userAuthRepository.save(usuario);
 			return usuario.getId();
+		} else {
+			throw new BusinnesException("Já existe um usuário cadastrado com esse login.");
 		}
-		return null;
 	}
 
 	public Integer saveOperador(UserAuthModel operador) {
