@@ -1,7 +1,8 @@
 package br.com.javatravelers.JavaTravelers.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.javatravelers.JavaTravelers.domain.enums.TicketStatus;
-import br.com.javatravelers.JavaTravelers.domain.model.FavoriteModel;
 import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
@@ -27,12 +26,6 @@ import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
 import br.com.javatravelers.JavaTravelers.domain.service.TicketService;
 import br.com.javatravelers.JavaTravelers.service.amadeus.AmadeusService;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
-import br.com.javatravelers.JavaTravelers.service.pagseguro.PaymentResult;
-import br.com.javatravelers.JavaTravelers.service.pagseguro.PaymentService;
-import br.com.javatravelers.JavaTravelers.service.pagseguro.Payment_items;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/tickets")
@@ -43,6 +36,9 @@ public class TicketController {
 	
 	@Autowired
 	TicketRepository ticketRepository;
+	
+	@Autowired
+	TicketService ticketService;
 	
 	@PostMapping("/search/location")
 	public ResponseEntity<String> getLocations(@RequestBody SearchLocation request){
@@ -90,6 +86,12 @@ public class TicketController {
 	public ResponseEntity<Boolean> deleteOrder(@PathVariable String flightOrderId){
 		boolean response = amadeus.deleteOrder(flightOrderId);
 		return  ResponseEntity.status(response ? HttpStatus.OK : HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(response);
+	}
+	
+	@GetMapping("/list")
+	public ResponseEntity<List<TicketModel>> list(@PathVariable String ticketCode){
+		List<TicketModel> ticketModel = ticketService.listTickets();		
+		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(ticketModel);
 	}
 	
 }

@@ -2,6 +2,8 @@ package br.com.javatravelers.JavaTravelers.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -9,6 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.javatravelers.JavaTravelers.domain.enums.TicketStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,14 +32,20 @@ public class TicketModel {
 	private Integer id;
 	
 	@NotBlank
-	@Column(columnDefinition = "LONGTEXT")
-	private String flight;
+	@Column(columnDefinition = "LONGTEXT", name = "flight_get")
+	private String flightGet;
+	
+	@Column(columnDefinition = "LONGTEXT", name = "flight_result")
+	private String flightResult;
 	
 	@Column(name = "user_id")
 	private Integer userId;
 		
-	@Column(name = "numero_reserva")
-	private String reservationNumber;
+	@Column(name = "referencia_reserva")
+	private String reference;
+	
+	@Column(name = "id_reserva")
+	private String reservationId;
 	
 	@NotBlank
 	@Column(name = "payment_url")
@@ -48,6 +57,7 @@ public class TicketModel {
 	@NotNull
 	private Double price;
 	
-	@NotBlank
-	private String status;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private TicketStatus status;
 }
