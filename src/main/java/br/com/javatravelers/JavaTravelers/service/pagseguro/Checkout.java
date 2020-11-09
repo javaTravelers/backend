@@ -12,4 +12,5 @@ public class Checkout {
 	private List<Payment_items> payment_items;
 	private String currency;
 	private Receiver receiver;
+	private String notificationURL;
 }

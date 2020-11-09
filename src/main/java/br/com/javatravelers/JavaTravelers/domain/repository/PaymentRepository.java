@@ -10,4 +10,5 @@ import br.com.javatravelers.JavaTravelers.domain.model.PaymentModel;
 @Repository
 public interface PaymentRepository extends JpaRepository<PaymentModel, Integer> {
 	public List<PaymentModel> findAllByUserId(int id);
+	public PaymentModel findByCodTransacao(String cod);
 }

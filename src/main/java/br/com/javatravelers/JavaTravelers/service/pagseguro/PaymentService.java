@@ -15,10 +15,18 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.BaseException;
 
 import br.com.javatravelers.JavaTravelers.domain.enums.PaymentStatus;
+import br.com.javatravelers.JavaTravelers.domain.enums.TicketStatus;
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.PaymentModel;
 import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserAuthModel;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderGet;
+import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
 import br.com.javatravelers.JavaTravelers.domain.repository.PaymentRepository;
+import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
+import br.com.javatravelers.JavaTravelers.domain.service.TicketService;
+import br.com.javatravelers.JavaTravelers.domain.service.UserService;
+import br.com.javatravelers.JavaTravelers.service.amadeus.AmadeusService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -29,6 +37,18 @@ public class PaymentService {
 
 	@Autowired
 	PaymentRepository paymentRepository;
+	
+	@Autowired
+	TicketRepository ticketRepository;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	TicketService ticketService;
+	
+	@Autowired
+	AmadeusService amadeus;
 	
 	public PaymentResult generatedUrlToCheckout(Payment_items items) {
 		
@@ -51,6 +71,7 @@ public class PaymentService {
 		checkout.setPayment_items(payment_items);
 		checkout.setCurrency(InformationsAndUtils.CURRENCY);
 		checkout.setReceiver(receiver);
+		checkout.setNotificationURL(InformationsAndUtils.NOTIFICATION_URL);
 		
 		
 		XStream xstream = new XStream();
@@ -114,5 +135,48 @@ public class PaymentService {
 		paymentRepository.save(payment);
 		return payment;
 		
+	}
+	
+	public Object updateStatus(NotificationResponse notification) {
+		
+		Date date = new Date();
+		
+		if (notification.getStatus().equals(PaymentStatus.APROVADO.name())) {
+			PaymentModel payment = paymentRepository.findByCodTransacao(notification.getTransactionCode());
+			if (payment != null) {
+				Gson json = new Gson();
+				payment.setStatus(PaymentStatus.APROVADO);
+				payment.setDataStatus(date);
+				paymentRepository.save(payment);
+				TicketModel  ticket = ticketRepository.findByPaymentId(payment.getCodTransacao());
+				FlightOrderGet flight = json.fromJson(ticket.getFlightGet(), FlightOrderGet.class);
+				FlightOrderResult flightResult = amadeus.createOrder(flight);
+				ticket.setFlightResult(json.toJson(flightResult));
+				ticket.setReference(flightResult.getData().getAssociatedRecords().get(0).getReference());
+				ticket.setReservationId(flightResult.getData().getId());
+				ticket.setStatus(TicketStatus.EMITIDO);
+				ticket = ticketRepository.save(ticket);
+				return ticket;
+			}
+		}else {
+			PaymentModel payment = paymentRepository.findByCodTransacao(notification.getTransactionCode());
+			if (payment != null) {
+				payment.setStatus(PaymentStatus.REJEITADO);
+				payment.setDataStatus(date);
+				payment = paymentRepository.save(payment);
+				return payment;
+			}
+		}
+		return null;
+	}
+	
+	public List<PaymentModel> listPayments() {
+		UserAuthModel user = userService.findAuthUser();
+		List<PaymentModel>  payments = paymentRepository.findAllByUserId(user.getId());
+
+		if (payments.size() <= 0) {
+			throw new BusinnesException("Não existem pagamentos para esse usuário");
+		}		
+		return payments;
 	}
 }

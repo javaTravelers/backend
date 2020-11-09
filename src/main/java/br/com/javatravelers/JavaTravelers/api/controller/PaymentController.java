@@ -1,5 +1,7 @@
 package br.com.javatravelers.JavaTravelers.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.javatravelers.JavaTravelers.domain.enums.TicketStatus;
 import br.com.javatravelers.JavaTravelers.domain.model.PaymentModel;
 import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderGet;
 import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
 import br.com.javatravelers.JavaTravelers.domain.service.TicketService;
+import br.com.javatravelers.JavaTravelers.service.pagseguro.NotificationResponse;
 import br.com.javatravelers.JavaTravelers.service.pagseguro.PaymentResult;
 import br.com.javatravelers.JavaTravelers.service.pagseguro.PaymentService;
 import br.com.javatravelers.JavaTravelers.service.pagseguro.Payment_items;
@@ -43,7 +47,9 @@ public class PaymentController {
 	
 	@ApiOperation(value = "Gerar o ticket pré-reserva e o código de pagamento.")
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Requisição bem sucedida. Novo ticket criado com sucesso.")
+			@ApiResponse(code = 201, message = "Requisição bem sucedida. Compra de passagem concluída.", response = TicketModel.class),
+			@ApiResponse(code = 200, message = "Requisição bem sucedida. Status do Pagamento Atualizado.", response = PaymentModel.class),
+			@ApiResponse(code = 404, message = "Pagamento não localizado")
 	})
 	
 	@PostMapping("/create")
@@ -62,7 +68,7 @@ public class PaymentController {
 		ticketModel.setPaymentUrl(result.getUrl());
 		ticketModel.setPaymentId(result.getCode());
 		ticketModel.setPrice(Double.parseDouble(payment.getAmount()));
-		ticketModel.setStatus("RESERVADO");
+		ticketModel.setStatus(TicketStatus.RESERVADO);
 		ticketRepository.save(ticketModel);
 		
 		return new ResponseEntity<PaymentModel>(paymentService.create(ticketModel), HttpStatus.CREATED);
@@ -73,4 +79,25 @@ public class PaymentController {
 		TicketModel ticketModel = ticketService.getTicket(ticketCode);		
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(ticketModel);
 	}
+	
+	@PostMapping("/order/response")
+	public ResponseEntity<?> getResponse(@RequestBody NotificationResponse notification){
+		Object response = paymentService.updateStatus(notification);
+		
+		if (response == null) {
+			return  ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(null);
+		}
+		else if (response.getClass() == TicketModel.class) {
+			return  ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
+		}else {
+			return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
+		}
+	}
+	
+	@GetMapping("/list")
+	public ResponseEntity<List<PaymentModel>> list(){
+		List<PaymentModel> paymentmodel = paymentService.listPayments();		
+		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(paymentmodel);
+	}
+	
 }
