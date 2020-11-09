@@ -4,28 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
-import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
-import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
-import br.com.javatravelers.JavaTravelers.uteis.ValidaCPF;
+import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserAuthModel;
+import br.com.javatravelers.JavaTravelers.domain.repository.UserAuthRepository;
+import br.com.javatravelers.JavaTravelers.infra.security.service.AuthenticationFacade;
 
 @Service
 public class UserService {
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserAuthRepository userRepository;
 	
-	public UserModel saveUser(UserModel userModel) throws BusinnesException{
-		
-		UserModel userModelDB = userRepository.findByEmail(userModel.getEmail());
-		
-		if ((userModelDB != null) && (!userModelDB.equals(userModel))) {
-			throw new BusinnesException("Já existe um usuário cadastrado com esse e-mail.");
-		}
-		
-		if (!ValidaCPF.cpfValid(userModel.getCpf())) {
-			throw new BusinnesException("O cpf informado é inválido.");
-		}
-		
-		return userRepository.save(userModel);
+	@Autowired
+	private AuthenticationFacade auth;
+	
+	public UserAuthModel findAuthUser() {
+		UserAuthModel user = userRepository.findByEmail(auth.getAuth().getName());	
+		if (user == null) {
+			throw new BusinnesException("Usuário não localizado!");
+		}		
+		return user;
 	}
 }

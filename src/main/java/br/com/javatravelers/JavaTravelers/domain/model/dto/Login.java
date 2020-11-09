@@ -1,23 +1,17 @@
 package br.com.javatravelers.JavaTravelers.domain.model.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Login {
-	@ApiModelProperty(value = "Nome do usuario", required = true, example = "user")
+	
+	
+	@ApiModelProperty(value = "Usuário", required = true, example = "marcosmonteiro@gmail.com")
 	private String usuario;
-	@ApiModelProperty(value = "Senha do usuario", required = true, example = "user@123")
+	@ApiModelProperty(value = "Senha do Usuário", required = true, example = "marcos123456")
 	private String senha;
-	public String getUsuario() {
-		return usuario;
-	}
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-	public String getSenha() {
-		return senha;
-	}
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
 	
 }

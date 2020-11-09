@@ -1,4 +1,4 @@
-package br.com.javatravelers.JavaTravelers.domain.status;
+package br.com.javatravelers.JavaTravelers.domain.enums;
 
 public enum PaymentStatus {
 	

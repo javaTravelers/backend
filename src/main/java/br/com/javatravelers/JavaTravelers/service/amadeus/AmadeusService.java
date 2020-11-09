@@ -1,11 +1,8 @@
 package br.com.javatravelers.JavaTravelers.service.amadeus;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +11,12 @@ import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.referenceData.Locations;
 import com.amadeus.resources.Location;
-import com.amadeus.resources.Traveler;
-import com.amadeus.resources.Traveler.Document;
-import com.amadeus.resources.Traveler.Phone;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.amadeus.resources.FlightOfferSearch;
-import com.amadeus.resources.FlightOrder;
-import com.amadeus.resources.FlightPrice;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
-import br.com.javatravelers.JavaTravelers.domain.model.FavoriteModel;
-import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
-import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;
@@ -42,6 +26,7 @@ import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPrice
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
 import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
+import br.com.javatravelers.JavaTravelers.domain.service.UserService;
 import br.com.javatravelers.JavaTravelers.service.amadeus.exception.TicketException;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
 
@@ -56,43 +41,14 @@ public class AmadeusService {
 	private TicketRepository ticketRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserService userService;
 
 	public AmadeusService () {
 		this.amadeus = Amadeus
 				.builder("RZ3pbc22VwLAXtXqIU80DmT2hv1M2J8y", "zVyCOrYgU6ThENBK")
 				.build();
 		this.ams = new AmadeusServiceUtil(amadeus);
-	}
-
-	public TicketModel ticketConverter(FlightOrderGet flight, int id) {
-		UserModel user = userRepository.findById(id);
-
-		if (user == null) {
-			throw new BusinnesException("Usuário não localizado: ID: "+ id);
-		}
-
-		Gson json = new Gson();
-		String strFlight = json.toJson(flight);
-
-		TicketModel ticketModel = new TicketModel();
-	
-		ticketModel.setFlight(strFlight);
-		ticketModel.setUserId(user.getId());
-
-		return ticketModel;
-	}
-
-	public FlightOrderGet ticketConverter(String reserva) {
-		TicketModel  ticket = ticketRepository.findByNumeroReserva(reserva);
-
-		if (ticket == null) {
-			throw new BusinnesException("Não encontramos a reserva: "+ reserva);
-		}
-		
-		Gson json = new Gson();
-		FlightOrderGet flight = json.fromJson(ticket.getFlight(), FlightOrderGet.class);; 
-
-		return flight;
 	}
 	
 	public String flightOffers(Map<String, String> request) {
@@ -220,6 +176,10 @@ public class AmadeusService {
 	}
 	
 	public boolean deleteOrder(String id) {
-		return ams.deleteOrder(id);
+		try {
+			return ams.deleteOrder(id);
+		} catch (ResponseException e) {
+			throw new TicketException("A reserva foi excluída com sucesso.", 200);
+		}
 	}
 }

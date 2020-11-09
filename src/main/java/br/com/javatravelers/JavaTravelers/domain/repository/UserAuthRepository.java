@@ -11,4 +11,6 @@ public interface UserAuthRepository extends JpaRepository<UserAuthModel, Integer
 	UserAuthModel findByLogin(String login);
 	boolean existsByLogin(String login);
 	
+	UserAuthModel findByEmail(String email);
+	
 }
