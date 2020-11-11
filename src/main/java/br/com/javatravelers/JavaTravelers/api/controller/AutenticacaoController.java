@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.javatravelers.JavaTravelers.infra.security.JwtTokenProvider;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import okhttp3.Credentials;
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserAuthModel;
 import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
@@ -27,6 +29,7 @@ import br.com.javatravelers.JavaTravelers.domain.service.CadastroService;
 
 @RestController
 @RequestMapping("/")
+@Api(value = "Autenticação do Usuário")
 public class AutenticacaoController {
 
 	@Autowired
@@ -52,7 +55,12 @@ public class AutenticacaoController {
 		service.save(cliente);
 	}
 
-
+	@ApiOperation(value = "Fazer login na API")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Requisição bem sucedida. Usuário logado com sucesso.", response = Credentials.class),
+			@ApiResponse(code = 400, message = "Uns dos campos do cadastro não foi preenchido, ou preenchido incorretamente."),
+			@ApiResponse(code = 422, message = "Cpf inválido ou e-mail já existente."),
+	})
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody Login login) {
 

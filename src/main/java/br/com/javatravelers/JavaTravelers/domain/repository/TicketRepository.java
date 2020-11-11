@@ -12,5 +12,6 @@ public interface TicketRepository extends JpaRepository<TicketModel, Integer> {
 	public TicketModel findByPaymentId(String paymentId );
 	public TicketModel findByReference(String reserva);
 	public TicketModel findByReferenceAndUserId(String reserva, int userId);
+	public TicketModel findByReservationIdAndUserId(String reservationId, int userId);
 	public List<TicketModel> findAllByUserId(Integer userId);
 }

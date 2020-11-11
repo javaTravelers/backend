@@ -27,6 +27,7 @@ import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
 import br.com.javatravelers.JavaTravelers.domain.service.TicketService;
 import br.com.javatravelers.JavaTravelers.domain.service.UserService;
 import br.com.javatravelers.JavaTravelers.service.amadeus.AmadeusService;
+import br.com.javatravelers.JavaTravelers.service.amadeus.exception.TicketException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -83,7 +84,7 @@ public class PaymentService {
 			bodyXML = xstream.toXML(checkout);
 		
 		} catch (BaseException e) {
-			throw new BusinnesException("Não foi possível realizar a conversão do objeto em xml."); 
+			throw new TicketException("[500] - Não foi possível realizar a conversão do objeto em xml.", 500); 
 		}
 		
 		OkHttpClient httpClient = new OkHttpClient();
@@ -100,25 +101,20 @@ public class PaymentService {
 			responseCode = response.body().string();
 		
 		} catch (IOException e) {
-			throw new BusinnesException("Algo errado ocorreu durante a comunicação com o servidor de pagamento. (Erro: " + response.code() + ")");
+			throw new TicketException("Algo errado ocorreu durante a comunicação com o servidor de pagamento. (Erro: " + response.code() + ")", 400);
 		}
 		
 		if(response.code() == 200) {
-			System.out.println(response.code());
-			
 			String code = responseCode.substring(responseCode.indexOf("<code>"), responseCode.indexOf("</code>")).replaceFirst("<code>", "");
-			//String date = responseCode.substring(responseCode.indexOf("<date>"), responseCode.indexOf("</date>")).replaceFirst("<date>", "");
-			
 			PaymentResult result = new PaymentResult();
 			result.setCode(code);
 			String url = InformationsAndUtils.LINK_CHECKOUT + code;
 			result.setUrl(url);
 			
-			
 			return result;
 			
 		} else {
-			throw new BusinnesException("A comunicação com o servidor obteve sucesso porém ocorreu o erro: " + response.code());
+			throw new TicketException("A comunicação com o servidor obteve sucesso porém ocorreu o erro: " + response.code(), response.code());
 		}
 	}
 	
@@ -173,10 +169,10 @@ public class PaymentService {
 	public List<PaymentModel> listPayments() {
 		UserAuthModel user = userService.findAuthUser();
 		List<PaymentModel>  payments = paymentRepository.findAllByUserId(user.getId());
-
 		if (payments.size() <= 0) {
-			throw new BusinnesException("Não existem pagamentos para esse usuário");
-		}		
+			throw new TicketException("[400] - Não existem pagamentos para esse usuário.", 400);
+		}	
+		
 		return payments;
 	}
 }
