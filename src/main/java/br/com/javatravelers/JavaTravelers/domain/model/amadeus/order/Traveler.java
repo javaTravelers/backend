@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,16 +22,30 @@ import lombok.Setter;
 @Table(name = "traveler")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Traveler{
+	
+	@ApiModelProperty(hidden = true)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer traveler_id;
+	
+	@ApiModelProperty(value = "Id do viajante", required = true, example = "1")
 	private String id;
-    private String dateOfBirth;
-    @OneToOne
+    
+	@ApiModelProperty(value = "Data de nascimento", required = true, example = "1982-01-1")
+	private String dateOfBirth;
+    
+	@ApiModelProperty(value = "Nome do viajante", required = true, example = "Marcos Medeiros")
+	@OneToOne
     private Name name;
-    private String gender;
+    
+	@ApiModelProperty(value = "Gênero", required = true, example = "MALE")
+	private String gender;
     @OneToOne
+    
+    @ApiModelProperty(value = "Moeda corrente", required = true, example = "BRL")
     private Contact contact;
+    
+    @ApiModelProperty(value = "Moeda corrente", required = true, example = "BRL")
     @OneToMany
     private List<Document> documents;
 }

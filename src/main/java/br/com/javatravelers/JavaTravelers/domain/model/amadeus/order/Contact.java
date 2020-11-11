@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,10 +21,15 @@ import lombok.Setter;
 @Table(name = "traveler_contact")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Contact{
+	
+	@ApiModelProperty(hidden = true)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-    private String emailAddress;
-    @OneToMany
+    
+	@ApiModelProperty(value = "Endereço de e-mail", required = true, example = "marcosmonteiro@gmail.com")
+	private String emailAddress;
+    
+	@OneToMany
     private List<Phone> phones;
 }

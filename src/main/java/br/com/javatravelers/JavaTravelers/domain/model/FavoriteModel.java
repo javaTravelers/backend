@@ -28,9 +28,12 @@ public class FavoriteModel {
 	private Integer id;
 	
 	@NotBlank
+	@ApiModelProperty(value = "", example = "Flight")
 	@Column(columnDefinition = "LONGTEXT")
 	private String flight;
 	
+	
+	@ApiModelProperty(value = "Id do usuário", example = "1")
 	@Column(name = "user_id")
 	private Integer userId;
 	
