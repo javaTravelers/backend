@@ -47,8 +47,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		switch (code) {
 		case '4':
 			status = HttpStatus.NOT_FOUND;
+			break;
 		case '5':
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			break;
 		}
 		
 		if (fullCode.equals("201")) {

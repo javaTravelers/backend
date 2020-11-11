@@ -53,7 +53,7 @@ public class SwaggerConfig {
 		apiInfoBuilder.title("javaTravelers REST API");
 		apiInfoBuilder.description("API Rest para gerenciamento de Passagens");
 		apiInfoBuilder.version("1.0");
-		apiInfoBuilder.termsOfServiceUrl("Termo de uso: Uso para estudos ...");
+		apiInfoBuilder.termsOfServiceUrl("https://github.com/javaTravelers/backend\"");
 		apiInfoBuilder.license("MIT License");
 		apiInfoBuilder.licenseUrl("https://github.com/javaTravelers/backend");
 		apiInfoBuilder.contact(this.contato());
@@ -63,8 +63,9 @@ public class SwaggerConfig {
 	}
 	private Contact contato() {
 		Contact contact = new Contact(
+				"@javaTravelers - 2020",
 				"https://github.com/javaTravelers/backend",
-				"@javaTravelers - 2020", "");
+				"");
 		 
 		 return contact;
 	}

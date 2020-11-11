@@ -40,18 +40,12 @@ public class PaymentController {
 	@Autowired
 	private TicketRepository ticketRepository;
 	
-	@PostMapping
-	public ResponseEntity<PaymentResult> payWithCheckout(@RequestBody Payment_items items) {
-		return new ResponseEntity<PaymentResult>(paymentService.generatedUrlToCheckout(items), HttpStatus.OK);
-	}
-	
-	@ApiOperation(value = "Gerar o ticket pré-reserva e o código de pagamento.")
+	@ApiOperation(value = "Gerar o ticket pré-reserva, o código de pagamento e o link para pagamento.")
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Requisição bem sucedida. Compra de passagem concluída.", response = TicketModel.class),
-			@ApiResponse(code = 200, message = "Requisição bem sucedida. Status do Pagamento Atualizado.", response = PaymentModel.class),
-			@ApiResponse(code = 404, message = "Pagamento não localizado")
+			@ApiResponse(code = 201, message = "Requisição bem sucedida. Pré-Reserva realizada com sucesso.", response = TicketModel.class),
+			@ApiResponse(code = 404, message = "Não foi possível realizar a pré-reserva."),
+			@ApiResponse(code = 500, message = "Erro interno do servidor. Tente novamente em alguns instantes.")
 	})
-	
 	@PostMapping("/create")
 	public ResponseEntity<PaymentModel> createTicket(@RequestBody FlightOrderGet flight) {
 		
@@ -74,18 +68,31 @@ public class PaymentController {
 		return new ResponseEntity<PaymentModel>(paymentService.create(ticketModel), HttpStatus.CREATED);
 	}
 	
+	@ApiOperation(value = "Consultar Passagem com o código da Reserva.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Requisição bem sucedida. Retorna a passagem solicitada.", response = TicketModel.class),
+			@ApiResponse(code = 404, message = "Não foi possível localizar a reserva."),
+			@ApiResponse(code = 500, message = "Erro interno do servidor. Tente novamente em alguns instantes.")
+	})
 	@GetMapping("/order/{ticketCode}")
 	public ResponseEntity<TicketModel> getTicket(@PathVariable String ticketCode){
 		TicketModel ticketModel = ticketService.getTicket(ticketCode);		
 		return  ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(ticketModel);
 	}
 	
+	@ApiOperation(value = "Simular Retorno do PagSeguro.")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Requisição bem sucedida. Status de Pagamento Atualizado com sucesso", response = PaymentModel.class),
+			@ApiResponse(code = 201, message = "Requisição bem sucedida. Pagamento Confirmado. Passagem Emitida com Sucesso!", response = TicketModel.class),
+			@ApiResponse(code = 404, message = "Não foi possível localizar o código de pagamento.", response = boolean.class),
+			@ApiResponse(code = 500, message = "Erro interno do servidor. Tente novamente em alguns instantes.")
+	})
 	@PostMapping("/order/response")
 	public ResponseEntity<?> getResponse(@RequestBody NotificationResponse notification){
 		Object response = paymentService.updateStatus(notification);
 		
 		if (response == null) {
-			return  ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(null);
+			return  ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(false);
 		}
 		else if (response.getClass() == TicketModel.class) {
 			return  ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
@@ -94,6 +101,12 @@ public class PaymentController {
 		}
 	}
 	
+	@ApiOperation(value = "Buscar Todos os Pagamentos do Usuário")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Requisição bem sucedida. Retorna um Array de Pagamentos", response = PaymentModel.class),
+			@ApiResponse(code = 404, message = "Não foi possível localizar o código de pagamento."),
+			@ApiResponse(code = 500, message = "Erro interno do servidor. Tente novamente em alguns instantes.")
+	})
 	@GetMapping("/list")
 	public ResponseEntity<List<PaymentModel>> list(){
 		List<PaymentModel> paymentmodel = paymentService.listPayments();		

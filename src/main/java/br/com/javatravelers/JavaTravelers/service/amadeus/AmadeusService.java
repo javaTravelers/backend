@@ -1,8 +1,6 @@
 package br.com.javatravelers.JavaTravelers.service.amadeus;
 
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +11,9 @@ import com.amadeus.referenceData.Locations;
 import com.amadeus.resources.Location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.amadeus.resources.FlightOfferSearch;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
+
+import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;
@@ -24,9 +21,7 @@ import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrder
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
-import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
-import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
-import br.com.javatravelers.JavaTravelers.domain.service.UserService;
+import br.com.javatravelers.JavaTravelers.domain.service.TicketService;
 import br.com.javatravelers.JavaTravelers.service.amadeus.exception.TicketException;
 import br.com.javatravelers.JavaTravelers.service.amadeus.resource.SearchLocation;
 
@@ -38,44 +33,13 @@ public class AmadeusService {
 	private AmadeusServiceUtil ams;
 	
 	@Autowired
-	private TicketRepository ticketRepository;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private UserService userService;
-
+	private TicketService ticketService;
+	
 	public AmadeusService () {
 		this.amadeus = Amadeus
 				.builder("RZ3pbc22VwLAXtXqIU80DmT2hv1M2J8y", "zVyCOrYgU6ThENBK")
 				.build();
 		this.ams = new AmadeusServiceUtil(amadeus);
-	}
-	
-	public String flightOffers(Map<String, String> request) {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		FlightOfferSearch[] flightOffers = null;
-		String jsons = null;
-		try {
-			flightOffers = amadeus.shopping.flightOffersSearch.get(
-					Params.with("originLocationCode", request.get("originCode"))
-					.and("destinationLocationCode", request.get("destinationCode"))
-					.and("departureDate", request.get("departureDate"))
-					.and("returnDate", request.get("returnDate"))
-					.and("adults", request.get("adults"))
-					////the number of child travelers (older than age 2 and younger than age 12 on date of departure) who will each have their own separate seat.
-					.and("infant", request.get("children"))
-					.and("currencyCode", "BRL")
-					.and("max", "10"));
-
-			if (flightOffers.length <= 0) {
-				throw new BusinnesException("[400] - Não foram encontrados vôos com esses parâmetros.");
-			}
-
-			jsons = gson.toJson(flightOffers);
-		} catch (ResponseException e) {
-			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
-		}
-		return jsons;
 	}
 
 	public FlightOfferResult flightOffers(FlightOfferGet request) {
@@ -93,7 +57,7 @@ public class AmadeusService {
 					.and("currencyCode", request.getCurrencyCode())
 					.and("max", request.getMax()));
 		} catch (ResponseException e) {
-			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
+			throw new TicketException(e.getMessage().replaceAll("\n", " - "), Integer.parseInt(e.getCode()));
 		}
 		return flightOffers;
 	}
@@ -123,10 +87,10 @@ public class AmadeusService {
 					.and("subType", Locations.ANY));
 			response = json.toJson(locations);
 			if(locations.length <= 0) {
-				throw new BusinnesException("[400] Local não encontrado.");
+				throw new TicketException("[400] - Local não encontrado.", 400);
 			}
 		} catch (ResponseException e) {
-			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
+			throw new TicketException(e.getMessage().replaceAll("\n", " - "), Integer.parseInt(e.getCode()));
 		}
 		return response;
 	}
@@ -140,7 +104,7 @@ public class AmadeusService {
 			// We price the 2nd flight of the list to confirm the price and the availability
 			flightPricing = ams.getPrice(search);
 		} catch (ResponseException e) {
-			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
+			throw new TicketException(e.getMessage().replaceAll("\n", " - "), Integer.parseInt(e.getCode()));
 		}
 		return flightPricing;
 	}
@@ -152,8 +116,7 @@ public class AmadeusService {
 		try {
 			create = mapper.writeValueAsString(flight);
 		} catch (JsonProcessingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new TicketException(e1.getMessage().replaceAll("\n", " - "), 500);
 		}
 		FlightOrderResult response = null;
 		try {
@@ -161,7 +124,7 @@ public class AmadeusService {
 			System.out.println(response);
 
 		} catch (ResponseException e) {
-			throw new BusinnesException(e.getMessage().replaceAll("\n", " - "));
+			throw new TicketException(e.getMessage().replaceAll("\n", " - "), Integer.parseInt(e.getCode()));
 		}
 
 		return response;
@@ -171,13 +134,14 @@ public class AmadeusService {
 		try {
 			return ams.viewOrder(id);
 		} catch (ResponseException e) {
-			throw new TicketException("A reserva solicitada não existe.", 400);
+			throw new TicketException("[400] - A reserva solicitada não existe.", 400);
 		}
 	}
 	
-	public boolean deleteOrder(String id) {
+	public boolean deleteOrder(String reservationId) {
+		ticketService.deleteTicket(reservationId);
 		try {
-			return ams.deleteOrder(id);
+			return ams.deleteOrder(reservationId);
 		} catch (ResponseException e) {
 			throw new TicketException("A reserva foi excluída com sucesso.", 200);
 		}
