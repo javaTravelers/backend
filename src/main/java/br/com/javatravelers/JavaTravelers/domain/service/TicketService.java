@@ -7,13 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import br.com.javatravelers.JavaTravelers.domain.enums.PaymentStatus;
 import br.com.javatravelers.JavaTravelers.domain.enums.TicketStatus;
-import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
 import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserAuthModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderGet;
-import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
 import br.com.javatravelers.JavaTravelers.domain.repository.TicketRepository;
 import br.com.javatravelers.JavaTravelers.service.amadeus.exception.TicketException;
 

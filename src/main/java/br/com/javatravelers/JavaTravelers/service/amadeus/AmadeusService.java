@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
-import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;

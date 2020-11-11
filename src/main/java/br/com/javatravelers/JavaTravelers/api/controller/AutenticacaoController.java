@@ -20,11 +20,9 @@ import io.swagger.annotations.ApiResponses;
 import okhttp3.Credentials;
 import br.com.javatravelers.JavaTravelers.domain.exception.BusinnesException;
 import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserAuthModel;
-import br.com.javatravelers.JavaTravelers.domain.model.acesso.UserModel;
 import br.com.javatravelers.JavaTravelers.domain.model.dto.Credencial;
 import br.com.javatravelers.JavaTravelers.domain.model.dto.Login;
 import br.com.javatravelers.JavaTravelers.domain.repository.UserAuthRepository;
-import br.com.javatravelers.JavaTravelers.domain.repository.UserRepository;
 import br.com.javatravelers.JavaTravelers.domain.service.CadastroService;
 
 @RestController

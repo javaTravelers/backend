@@ -18,15 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amadeus.resources.Location;
-import com.sun.tools.javac.code.Attribute.Array;
-
-import br.com.javatravelers.JavaTravelers.domain.model.PaymentModel;
 import br.com.javatravelers.JavaTravelers.domain.model.TicketModel;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.OffersSearch;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferGet;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.flight.FlightOfferResult;
-import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderGet;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.order.FlightOrderResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceResult;
 import br.com.javatravelers.JavaTravelers.domain.model.amadeus.price.FlightPriceSearch;
