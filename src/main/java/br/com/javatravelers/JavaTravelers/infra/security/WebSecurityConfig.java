@@ -70,7 +70,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/style.css").permitAll()
                 .antMatchers(HttpMethod.GET, "/images/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/payment/order/response").permitAll()
-
+                .antMatchers(HttpMethod.POST, "/tickets/search/location").permitAll()
+                .antMatchers(HttpMethod.POST, "/tickets/offers").permitAll()
+                .antMatchers(HttpMethod.POST, "/tickets/offers/search").permitAll()
+                .antMatchers(HttpMethod.POST, "/tickets/offers/price").permitAll()
                 
                 
                 .anyRequest().authenticated()
